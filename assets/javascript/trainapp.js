@@ -18,6 +18,7 @@ function nextTrain(time, freq) {
     var timeConverted = moment(time, "HH:mm").subtract(1, "years");
     var timeDiff = moment().diff(moment(timeConverted), "minutes");
     var timeRem = timeDiff % freq;
+    console.log("timeRem function nextTrain = " + timeRem);
     var minTillNext = freq - timeRem;
     var nextTrain = moment().add(minTillNext, "minutes");
     return moment(nextTrain).format("HH:mm");
@@ -25,20 +26,16 @@ function nextTrain(time, freq) {
 
 //function to compute the number of minutes away the next train is.
 function minutesAway(time, freq) {
-    var timeConverted = moment(time, "HH:mm");
+    var timeConverted = moment(time, "HH:mm").subtract(1, "years");
     var timeDiff = moment().diff(moment(timeConverted), "minutes");
     var timeRem = timeDiff % freq;
+    console.log("timeRem = " + timeRem);
     var minTillNext = freq - timeRem;
     return minTillNext;
 }
 
 //call to the database to populate the table with current train information
 database.ref().on("child_added", function(childSnapshot) {
-
-    console.log(childSnapshot.val().trainName);
-    console.log(childSnapshot.val().destination);
-    console.log(childSnapshot.val().frequency);
-    console.log(childSnapshot.val().firstTrain);
 
     $("#train-information").append("<tr><td class='train-name'>" + childSnapshot.val().trainName + "</td><td class='destination'>" + childSnapshot.val().destination + "</td><td class='frequency'>" + childSnapshot.val().frequency + "</td><td class='next-arrival'>" + nextTrain(childSnapshot.val().firstTrain, childSnapshot.val().frequency) + "</td><td class='minutes-away'>" + minutesAway(childSnapshot.val().firstTrain, childSnapshot.val().frequency) +
         "</td><td class='delete-train'><button id='hello' class='delete-train-btn btn btn-danger' value='" + childSnapshot.val().trainName + "'>Delete</button></td></tr>");
